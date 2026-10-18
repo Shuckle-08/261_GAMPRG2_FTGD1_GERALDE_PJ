@@ -5,6 +5,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "RunGameMode.generated.h"
 
+class ATile;
+
 UCLASS()
 class ENDLESSRUNNER_API ARunGameMode : public AGameModeBase
 {
@@ -12,4 +14,19 @@ class ENDLESSRUNNER_API ARunGameMode : public AGameModeBase
 
 public:
     ARunGameMode();
+
+protected:
+    virtual void BeginPlay() override;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Course")
+    TSubclassOf<ATile> tileClass;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Course")
+    float tileDestroyDelay = 2.0f;
+
+private:
+    UFUNCTION()
+    void handleTileExited(ATile* exitedTile);
+
+    void bindTile(ATile* tile);
 };
