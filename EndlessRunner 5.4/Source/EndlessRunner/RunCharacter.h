@@ -1,0 +1,27 @@
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Character.h"
+#include "RunCharacter.generated.h"
+
+class USpringArmComponent;
+class UCameraComponent;
+
+UCLASS()
+class ENDLESSRUNNER_API ARunCharacter : public ACharacter
+{
+    GENERATED_BODY()
+
+public:
+    ARunCharacter();
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+    USpringArmComponent* springArm;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+    UCameraComponent* camera;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+    float forwardSpeed = 800.0f;
+};
