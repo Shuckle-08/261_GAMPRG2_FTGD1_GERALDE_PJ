@@ -3,6 +3,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "TimerManager.h"
 #include "RunGameMode.generated.h"
 
 class ATile;
@@ -28,5 +29,13 @@ private:
     UFUNCTION()
     void handleTileExited(ATile* exitedTile);
 
+    UFUNCTION()
+    void handleCharacterDeath();
+
     void bindTile(ATile* tile);
+    void restartCurrentLevel();
+
+    FTimerHandle restartTimerHandle;
+
+    bool isRestarting = false;
 };

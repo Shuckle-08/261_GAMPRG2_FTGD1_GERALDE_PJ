@@ -1,8 +1,11 @@
 
 #include "RunGameMode.h"
+
 #include "Tile.h"
+#include "RunCharacter.h"
 #include "EngineUtils.h"
 #include "Components/ArrowComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 ARunGameMode::ARunGameMode()
 {
@@ -17,6 +20,19 @@ void ARunGameMode::BeginPlay()
     {
         bindTile(*iterator);
         break;
+    }
+
+    // Bind to the player's death event.
+    ARunCharacter* runCharacter = Cast<ARunCharacter>(
+        UGameplayStatics::GetPlayerCharacter(this, 0)
+    );
+
+    if (runCharacter)
+    {
+        runCharacter->OnDeath.AddDynamic(
+            this,
+            &ARunGameMode::handleCharacterDeath
+        );
     }
 }
 
@@ -65,4 +81,33 @@ void ARunGameMode::handleTileExited(ATile* exitedTile)
 
     // Remove the old tile after a delay.
     exitedTile->destroyAfterDelay(tileDestroyDelay);
+}
+
+void ARunGameMode::handleCharacterDeath()
+{
+    if (isRestarting)
+    {
+        return;
+    }
+
+    isRestarting = true;
+
+    GetWorldTimerManager().SetTimer(
+        restartTimerHandle,
+        this,
+        &ARunGameMode::restartCurrentLevel,
+        2.0f,
+        false
+    );
+}
+
+void ARunGameMode::restartCurrentLevel()
+{
+    const FString currentLevelName =
+        UGameplayStatics::GetCurrentLevelName(this, true);
+
+    UGameplayStatics::OpenLevel(
+        this,
+        FName(*currentLevelName)
+    );
 }

@@ -33,6 +33,9 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
     UInputAction* moveRightAction;
 
+    void disableControls();
+
+
 private:
     UPROPERTY()
     ARunCharacter* runCharacter;
@@ -45,4 +48,7 @@ private:
 
     void moveLeft();
     void moveRight();
+
+    bool controlsDisabled = false;
+
 };

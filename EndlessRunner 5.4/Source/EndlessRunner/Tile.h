@@ -8,8 +8,9 @@
 class USceneComponent;
 class UArrowComponent;
 class UBoxComponent;
-class ARunCharacter;
+class AObstacle;
 class ATile;
+class APickup;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
     FTileExitedSignature,
@@ -34,17 +35,39 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tile")
     UBoxComponent* exitTrigger;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Obstacle")
+    UBoxComponent* obstacleSpawnArea;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Obstacle")
+    TArray<TSubclassOf<AObstacle>> obstacleClasses;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pickup")
+    UBoxComponent* pickupSpawnArea;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pickup")
+    TArray<TSubclassOf<APickup>> pickupClasses;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup", meta = (ClampMin = "0.0", ClampMax = "1.0"))
+    float pickupSpawnChance = 1.0f;
+
     UPROPERTY(BlueprintAssignable, Category = "Tile")
     FTileExitedSignature Exited;
 
     void destroyAfterDelay(float delay);
 
+
+
 protected:
     virtual void BeginPlay() override;
+
+    virtual void Destroyed() override;
 
 private:
     UPROPERTY()
     bool hasExited = false;
+
+    UPROPERTY()
+    TArray<AObstacle*> spawnedObstacles;
 
     FTimerHandle destroyTimerHandle;
 
@@ -58,5 +81,13 @@ private:
         const FHitResult& sweepResult
     );
 
+    void spawnObstacle();
+    void destroySpawnedObstacles();
     void destroyTile();
+
+    UPROPERTY()
+TArray<APickup*> spawnedPickups;
+
+void spawnPickup();
+void destroySpawnedPickups();
 };

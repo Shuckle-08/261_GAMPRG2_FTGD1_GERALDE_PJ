@@ -7,10 +7,13 @@
 #include "InputAction.h"
 #include "InputMappingContext.h"
 #include "Engine/LocalPlayer.h"
+#include "GameFramework/CharacterMovementComponent.h"
+
 
 ARunCharacterController::ARunCharacterController()
 {
     PrimaryActorTick.bCanEverTick = true;
+
 }
 
 void ARunCharacterController::BeginPlay()
@@ -74,7 +77,7 @@ void ARunCharacterController::Tick(float deltaTime)
 {
     Super::Tick(deltaTime);
 
-    if (!runCharacter)
+    if (controlsDisabled || !runCharacter)
     {
         return;
     }
@@ -102,10 +105,45 @@ void ARunCharacterController::Tick(float deltaTime)
 
 void ARunCharacterController::moveLeft()
 {
+    if (controlsDisabled)
+    {
+        return;
+    }
+
     currentLane = FMath::Max(currentLane - 1, -1);
 }
 
 void ARunCharacterController::moveRight()
 {
+    if (controlsDisabled)
+    {
+        return;
+    }
+
     currentLane = FMath::Min(currentLane + 1, 1);
+}
+
+void ARunCharacterController::disableControls()
+{
+    if (controlsDisabled)
+    {
+        return;
+    }
+
+    controlsDisabled = true;
+
+    SetIgnoreMoveInput(true);
+    SetIgnoreLookInput(true);
+
+    if (ULocalPlayer* localPlayer = GetLocalPlayer())
+    {
+        if (UEnhancedInputLocalPlayerSubsystem* inputSubsystem =
+            localPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+        {
+            if (inputMappingContext)
+            {
+                inputSubsystem->RemoveMappingContext(inputMappingContext);
+            }
+        }
+    }
 }
