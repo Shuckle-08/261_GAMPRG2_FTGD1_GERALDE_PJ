@@ -41,6 +41,12 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Obstacle")
     TArray<TSubclassOf<AObstacle>> obstacleClasses;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Obstacle", meta = (ClampMin = "1"))
+    int32 minObstacleCount = 2;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Obstacle", meta = (ClampMin = "1"))
+    int32 maxObstacleCount = 3;
+
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pickup")
     UBoxComponent* pickupSpawnArea;
 

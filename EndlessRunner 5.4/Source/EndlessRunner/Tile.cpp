@@ -91,63 +91,57 @@ void ATile::handleExitOverlap(
 
 void ATile::spawnObstacle()
 {
-    UE_LOG(LogTemp, Warning, TEXT("Tile BeginPlay: %s"), *GetName());
-
-    UE_LOG(LogTemp, Warning, TEXT("Obstacle area: %s"),
-        obstacleSpawnArea ? TEXT("Valid") : TEXT("Missing"));
-
-    UE_LOG(LogTemp, Warning, TEXT("Obstacle classes: %d"),
-        obstacleClasses.Num());
-
     if (obstacleClasses.IsEmpty() || !obstacleSpawnArea)
     {
         return;
     }
 
-    const int32 randomIndex = FMath::RandRange(
-        0,
-        obstacleClasses.Num() - 1
+    int32 obstacleCount = FMath::RandRange(
+        minObstacleCount,
+        maxObstacleCount
     );
 
-    TSubclassOf<AObstacle> obstacleClass =
-        obstacleClasses[randomIndex];
-
-    if (!obstacleClass)
+    for (int32 i = 0; i < obstacleCount; i++)
     {
-        return;
-    }
-
-    const FVector spawnAreaCenter =
-        obstacleSpawnArea->GetComponentLocation();
-
-    const FVector spawnAreaExtent =
-        obstacleSpawnArea->GetScaledBoxExtent();
-
-    const FVector spawnLocation =
-        UKismetMathLibrary::RandomPointInBoundingBox(
-            spawnAreaCenter,
-            spawnAreaExtent
+        const int32 randomIndex = FMath::RandRange(
+            0,
+            obstacleClasses.Num() - 1
         );
 
-    FActorSpawnParameters spawnParameters;
-    spawnParameters.SpawnCollisionHandlingOverride =
-        ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+        TSubclassOf<AObstacle> obstacleClass =
+            obstacleClasses[randomIndex];
 
-    AObstacle* spawnedObstacle = GetWorld()->SpawnActor<AObstacle>(
-        obstacleClass,
-        spawnLocation,
-        GetActorRotation(),
-        spawnParameters
-    );
+        if (!obstacleClass)
+        {
+            continue;
+        }
 
-    if (spawnedObstacle)
-    {
-        spawnedObstacle->AttachToActor(
-            this,
-            FAttachmentTransformRules::KeepWorldTransform
+        const FVector spawnLocation =
+            UKismetMathLibrary::RandomPointInBoundingBox(
+                obstacleSpawnArea->GetComponentLocation(),
+                obstacleSpawnArea->GetScaledBoxExtent()
+            );
+
+        FActorSpawnParameters spawnParameters;
+        spawnParameters.SpawnCollisionHandlingOverride =
+            ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+        AObstacle* spawnedObstacle = GetWorld()->SpawnActor<AObstacle>(
+            obstacleClass,
+            spawnLocation,
+            GetActorRotation(),
+            spawnParameters
         );
 
-        spawnedObstacles.Add(spawnedObstacle);
+        if (spawnedObstacle)
+        {
+            spawnedObstacle->AttachToActor(
+                this,
+                FAttachmentTransformRules::KeepWorldTransform
+            );
+
+            spawnedObstacles.Add(spawnedObstacle);
+        }
     }
 }
 

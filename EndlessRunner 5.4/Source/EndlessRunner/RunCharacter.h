@@ -10,6 +10,7 @@ class UCameraComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FRunCharacterDeathSignature);
 
+
 UCLASS()
 class ENDLESSRUNNER_API ARunCharacter : public ACharacter
 {

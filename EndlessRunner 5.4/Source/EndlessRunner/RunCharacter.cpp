@@ -61,5 +61,6 @@ void ARunCharacter::Die()
 void ARunCharacter::addCoin()
 {
     coins++;
+
     UE_LOG(LogTemp, Warning, TEXT("Coins: %d"), coins);
 }

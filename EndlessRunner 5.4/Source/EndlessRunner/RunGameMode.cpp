@@ -55,8 +55,17 @@ void ARunGameMode::handleTileExited(ATile* exitedTile)
     }
 
     // Spawn the next tile at the previous tile's attach point.
-    const FTransform spawnTransform =
-        exitedTile->attachPoint->GetComponentTransform();
+    const FVector spawnLocation =
+        exitedTile->attachPoint->GetComponentLocation();
+
+    const FRotator spawnRotation =
+        exitedTile->attachPoint->GetComponentRotation();
+
+    const FTransform spawnTransform(
+        spawnRotation,
+        spawnLocation,
+        FVector::OneVector
+    );
 
     FActorSpawnParameters spawnParameters;
     spawnParameters.SpawnCollisionHandlingOverride =
